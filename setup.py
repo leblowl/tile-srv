@@ -6,4 +6,5 @@ setup(name = 'tile-srv',
       install_requires = ['Cython==0.22.1',
                           'gevent==1.1b2.dev0',
                           'greenlet==0.4.7',
-                          'wheel==0.24.0'])
+                          'wheel==0.24.0',
+                          'tile-gen==0.1.0'])
