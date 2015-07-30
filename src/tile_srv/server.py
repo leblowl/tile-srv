@@ -1,4 +1,5 @@
 import os
+import tile_gen.app as app
 from gevent import pywsgi
 
 config_path = os.getcwd() + "/rsc/tilestache.cfg"
