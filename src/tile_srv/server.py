@@ -11,7 +11,6 @@ def application(env, start_response):
     start_response('404 Not Found', [('Content-Type', 'text/plain')])
     return ['Route not found.']
 
-
 if __name__ == '__main__':
   print("tile-srv listening on 8088...")
   pywsgi.WSGIServer(('127.0.0.1', 8088), application).serve_forever()
