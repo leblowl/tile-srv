@@ -8,7 +8,8 @@ sys.path.append(os.getcwd() + '/rsc')
 
 def get_tile(layer, z, x, y, ext):
   mimetype, body = tile_gen.get_tile(layer, z, x, y, ext)
-  response.content_type = mimetype
+  response.headers['Access-Control-Allow-Origin'] = '*'
+  response.headers['Content-Type'] = mimetype
   return body
 
 app = Bottle()
