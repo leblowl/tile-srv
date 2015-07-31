@@ -1,14 +1,15 @@
 import os
 import sys
-import tile_gen.app as tg
+import tile_gen.app as tile_gen
 from gevent import pywsgi
-from bottle import Bottle, Response
+from bottle import Bottle, response
 
 sys.path.append(os.getcwd() + '/rsc')
 
 def get_tile(layer, z, x, y, ext):
-  mimetype, body = tg.get_tile(layer, z, x, y, ext)
-  return Response(body, 200, {content-type: mimetype})
+  mimetype, body = tile_gen.get_tile(layer, z, x, y, ext)
+  response.content_type = mimetype
+  return body
 
 app = Bottle()
 app.route('/<layer>/<z:int>/<x:int>/<y:int>.<ext>', 'GET', get_tile)
