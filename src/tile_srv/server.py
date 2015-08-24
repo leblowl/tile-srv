@@ -1,6 +1,6 @@
 import os
 import sys
-import tile_gen.app as tile_gen
+import tile_gen.core as tile_gen
 from gevent import pywsgi
 from bottle import Bottle, response
 
