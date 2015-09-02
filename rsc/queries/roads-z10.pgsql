@@ -3,15 +3,10 @@ SELECT
     way AS __geometry__,
     'openstreetmap' AS source,
     name,
-    aeroway,
-    bridge,
     highway,
-    layer,
     railway,
-    tunnel,
-    oneway,
+    render,
     ref,
-    operator,
     route,
     tags->'type' AS type,
     tags->'colour' AS colour,
@@ -24,9 +19,6 @@ SELECT
     tags->'descent' AS descent,
     tags->'roundtrip' AS roundtrip,
     tags->'route_name' AS route_name,
-    %#tags AS tags
+    %#tags AS tags_
 
-FROM planet_osm_line
-
-WHERE
-    mz_calculate_road_level(highway, railway, aeroway, tags->'network') <= 10
+FROM planet_osm_line_z10_mv
