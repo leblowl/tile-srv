@@ -5,7 +5,6 @@ SELECT
     name,
     highway,
     railway,
-    render,
     ref,
     route,
     tags->'type' AS type,
@@ -21,4 +20,4 @@ SELECT
     tags->'route_name' AS route_name,
     %#tags AS tags
 
-FROM planet_osm_line_z15plus_mv
+FROM roads_z15plus

@@ -3,6 +3,6 @@ SELECT
     st_union(the_geom) AS __geometry__,
     max(gid) AS __id__
 FROM
-    ne_10m_land
+    ne_10m_land_tiled
 WHERE
     the_geom && !bbox!
