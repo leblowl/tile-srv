@@ -1,0 +1,123 @@
+{% macro _water_z0_7(ocean_db, lakes_db) -%}
+   SELECT name, area, kind, source, __geometry__, __id__
+
+   FROM
+   (
+       --
+       -- Ocean
+       --
+       SELECT
+           '' AS name,
+           sum(way_area)::bigint AS area,
+           'ocean' AS kind,
+           'naturalearthdata.com' AS source,
+           st_union(the_geom) AS __geometry__,
+           max(gid) __id__
+
+       FROM {{ocean_db}}
+
+       --
+       -- Lakes
+       --
+       UNION
+
+       SELECT
+           name,
+           sum(way_area)::bigint AS area,
+           'lake' AS kind,
+           'naturalearthdata.com' AS source,
+           st_union(the_geom) AS __geometry__,
+           max(gid) __id__
+
+       FROM {{lakes_db}}
+
+       GROUP BY name
+
+   ) AS water_areas
+{%- endmacro %}
+
+{% macro _water_z9_16(min_area, waterways) -%}
+   SELECT name, area, kind, source, __geometry__, __id__, tags
+
+   FROM
+   (
+       --
+       -- Ocean
+       --
+       SELECT
+           '' AS name,
+           way_area::bigint AS area,
+           'ocean' AS kind,
+           'openstreetmapdata.com' AS source,
+           the_geom AS __geometry__,
+           gid AS __id__,
+           NULL AS tags
+
+       FROM water_polygons
+
+       --
+       -- Other water areas
+       --
+       UNION
+
+       SELECT
+           name,
+           way_area::bigint AS area,
+           COALESCE("waterway", "natural", "landuse") AS kind,
+           'openstreetmap.org' AS source,
+           way AS __geometry__,
+           osm_id AS __id__,
+           %#tags AS tags
+
+       FROM planet_osm_polygon
+
+       WHERE
+           mz_calculate_is_water("waterway", "natural", "landuse") = TRUE
+           {% if min_area %}
+              AND way_area::bigint > {{ min_area }}
+           {% endif %}
+
+       --
+       -- Water line geometries
+       --
+       UNION
+
+       SELECT
+           name,
+           NULL AS area,
+           waterway AS kind,
+           'openstreetmap.org' AS source,
+           way AS __geometry__,
+           osm_id AS __id__,
+           %#tags AS tags
+
+       FROM planet_osm_line
+
+       WHERE waterway IN {{ waterways }}
+
+   ) AS water_areas
+{%- endmacro %}
+
+{% macro water(zoom) -%}
+   {% if   zoom >= 16 %}
+      {{ _water_z9_16(none, '("canal", "dam", "ditch", "drain", "river", "stream")') }}
+   {% elif zoom >= 15 %}
+      {{ _water_z9_16('100 -- 4px', '("canal", "dam", "river", "stream")') }}
+   {% elif zoom >= 14 %}
+      {{ _water_z9_16('400 -- 4px', '("canal", "dam", "river", "stream")') }}
+   {% elif zoom >= 13 %}
+      {{ _water_z9_16('1600 -- 4px', '("canal", "dam", "river", "stream")') }}
+   {% elif zoom >= 12 %}
+      {{ _water_z9_16('6400 -- 4px', '("canal", "river", "stream")') }}
+   {% elif zoom >= 11 %}
+      {{ _water_z9_16('25600 -- 4px', '("canal", "river", "stream")') }}
+   {% elif zoom >= 9 %}
+      {{ _water_z9_16('102400 -- 4px', '("canal", "river")') }}
+   {% elif zoom >= 7 %}
+      {{ _water_z0_7('ne_10m_ocean', 'ne_10m_lakes') }}
+   {% elif zoom >= 4 %}
+      {{ _water_z0_7('ne_50m_ocean', 'ne_50m_lakes') }}
+   {% elif zoom >= 0 %}
+      {{ _water_z0_7('ne_110m_ocean', 'ne_110m_lakes') }}
+   {% endif %}
+{%- endmacro %}
