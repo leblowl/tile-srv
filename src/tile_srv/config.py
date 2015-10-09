@@ -6,9 +6,10 @@ def get_module(env, template_name):
     return env.get_template(template_name).module
 
 queries_env = j2.Environment(loader=j2.PackageLoader('queries', ''))
-roads = get_module(queries_env, 'roads.jinja2').roads
-earth = get_module(queries_env, 'earth.jinja2').earth
-water = get_module(queries_env, 'water.jinja2').water
+roads =      get_module(queries_env, 'roads.jinja2').roads
+earth =      get_module(queries_env, 'earth.jinja2').earth
+water =      get_module(queries_env, 'water.jinja2').water
+boundaries = get_module(queries_env, 'boundaries.jinja2').boundaries
 
 config = {"dbinfo": {"user": "zoonmaps",
                      "database": "gis"},
@@ -31,6 +32,7 @@ config = {"dbinfo": {"user": "zoonmaps",
                                                  transform.detect_osm_relation,
                                                  transform.remove_feature_id],
                                "sort_fn": sort.earth},
+
                      "water": {"query_fn": water,
                                "simplify": 0,
                                "geometry_types": ["Polygon",
@@ -40,15 +42,11 @@ config = {"dbinfo": {"user": "zoonmaps",
                                "transform_fns": [transform.add_id_to_properties,
                                                  transform.detect_osm_relation,
                                                  transform.remove_feature_id],
-                               "sort_fn": sort.water}}}
+                               "sort_fn": sort.water},
 
-'''
-
-
-                     "boundaries": {"queries": [],
+                     "boundaries": {"query_fn": boundaries,
                                     "simplify": 0,
                                     "geometry_types": ["LineString", "MultiLineString"],
                                     "transform_fns": [transform.add_id_to_properties,
                                                       transform.detect_osm_relation,
-                                                      transform.remove_feature_id]}
-'''
+                                                      transform.remove_feature_id]}}}

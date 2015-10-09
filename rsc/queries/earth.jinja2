@@ -1,8 +1,8 @@
 {% set earth_select %}
    SELECT 
       'base' AS land,
-      st_union(the_geom) AS __geometry__,
-      max(gid) AS __id__
+      the_geom AS __geometry__,
+      gid AS __id__
 {% endset %}
 
 {% macro earth(zoom) -%}

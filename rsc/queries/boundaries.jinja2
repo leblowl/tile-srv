@@ -1,0 +1,97 @@
+{% set boundaries_z0 %}
+   SELECT
+       gid AS __id__,
+       the_geom AS __geometry__,
+       scalerank::float,
+       featurecla AS kind,
+       'country' AS type
+
+   FROM ne_110m_admin_0_boundary_lines_land
+{% endset %}
+
+{% set boundaries_z3 %}
+   SELECT __id__, __geometry__, type, scalerank, kind
+   FROM
+   (
+       SELECT
+           gid AS __id__,
+           the_geom AS __geometry__,
+           'country' AS type,
+           scalerank::float,
+           featurecla AS kind
+
+       FROM
+           ne_50m_admin_0_boundary_lines_land
+
+       UNION
+
+       SELECT
+           gid AS __id__,
+           the_geom AS __geometry__,
+           'state' AS type,
+           scalerank::float,
+           featurecla AS kind
+
+       FROM
+           ne_50m_admin_1_states_provinces_lines
+ 
+   ) AS boundaries
+{% endset %}
+
+{% set boundaries_z7 %}
+   SELECT __id__, __geometry__, name, type, scalerank, kind, labelrank
+   FROM
+   (
+       SELECT
+           gid AS __id__,
+           the_geom AS __geometry__,
+           name,
+           'country' AS type,
+           scalerank::float,
+           featurecla AS kind,
+           labelrank
+           
+       FROM
+           ne_10m_admin_0_boundary_lines_land
+
+       UNION
+
+       SELECT
+           gid AS __id__,
+           the_geom AS __geometry__,
+           name,
+           'state' AS type,
+           scalerank::float,
+           featurecla AS kind,
+           NULL AS labelrank
+           
+       FROM
+           ne_10m_admin_1_states_provinces_lines
+
+   ) AS boundaries
+{% endset %}
+
+{% set boundaries_z8 %}
+   SELECT
+       osm_id AS __id__,
+       way AS __geometry__,
+       tags->'border_type' AS kind,
+       name,
+       %#tags AS tags
+   FROM
+       planet_osm_line
+   WHERE
+       boundary='administrative'
+{% endset %}
+
+{% macro boundaries(zoom) -%}
+   {% if zoom >= 8 %}
+      {{ boundaries_z8 }}
+   {% elif zoom >= 7 %}
+      {{ boundaries_z7 }}
+   {% elif zoom >= 3 %}
+      {{ boundaries_z3 }}
+   {% elif zoom >= 0 %}
+      {{ boundaries_z0 }}
+   {% endif %}
+{%- endmacro %}

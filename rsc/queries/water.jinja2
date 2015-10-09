@@ -7,19 +7,19 @@
        -- Ocean
        --
        SELECT
-           '' AS name,
-           sum(way_area)::bigint AS area,
+           'Ocean' AS name,
+           way_area AS area,
            'ocean' AS kind,
            'naturalearthdata.com' AS source,
-           st_union(the_geom) AS __geometry__,
-           max(gid) __id__
+           the_geom AS __geometry__,
+           gid AS __id__
 
        FROM {{ocean_db}}
 
        --
        -- Lakes
        --
-       UNION
+       UNION ALL
 
        SELECT
            name,
@@ -100,19 +100,19 @@
 
 {% macro water(zoom) -%}
    {% if   zoom >= 16 %}
-      {{ _water_z9_16(none, '("canal", "dam", "ditch", "drain", "river", "stream")') }}
+      {{ _water_z9_16(none, "('canal', 'dam', 'ditch', 'drain', 'river', 'stream')") }}
    {% elif zoom >= 15 %}
-      {{ _water_z9_16('100 -- 4px', '("canal", "dam", "river", "stream")') }}
+      {{ _water_z9_16('100 -- 4px', "('canal', 'dam', 'river', 'stream')") }}
    {% elif zoom >= 14 %}
-      {{ _water_z9_16('400 -- 4px', '("canal", "dam", "river", "stream")') }}
+      {{ _water_z9_16('400 -- 4px', "('canal', 'dam', 'river', 'stream')") }}
    {% elif zoom >= 13 %}
-      {{ _water_z9_16('1600 -- 4px', '("canal", "dam", "river", "stream")') }}
+      {{ _water_z9_16('1600 -- 4px', "('canal', 'dam', 'river', 'stream')") }}
    {% elif zoom >= 12 %}
-      {{ _water_z9_16('6400 -- 4px', '("canal", "river", "stream")') }}
+      {{ _water_z9_16('6400 -- 4px', "('canal', 'river', 'stream')") }}
    {% elif zoom >= 11 %}
-      {{ _water_z9_16('25600 -- 4px', '("canal", "river", "stream")') }}
+      {{ _water_z9_16('25600 -- 4px', "('canal', 'river', 'stream')") }}
    {% elif zoom >= 9 %}
-      {{ _water_z9_16('102400 -- 4px', '("canal", "river")') }}
+      {{ _water_z9_16('102400 -- 4px', "('canal', 'river')") }}
    {% elif zoom >= 7 %}
       {{ _water_z0_7('ne_10m_ocean', 'ne_10m_lakes') }}
    {% elif zoom >= 4 %}
