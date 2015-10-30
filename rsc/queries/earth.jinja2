@@ -6,13 +6,11 @@
 {% endset %}
 
 {% macro earth(zoom) -%}
-   {% if zoom >= 9 %}
+   {% if zoom >= 6 %}
       {{ earth_select }} FROM land_polygons
-   {% elif zoom >= 7 %}
-      {{ earth_select }} FROM ne_10m_land_tiled
    {% elif zoom >= 4 %}
-      {{ earth_select }} FROM ne_50m_land
+      {{ earth_select }} FROM ne_10m_land_tiled
    {% elif zoom >= 0 %}
-      {{ earth_select }} FROM ne_110m_land
+      {{ earth_select }} FROM ne_50m_land
    {% endif %}
 {%- endmacro %}

@@ -116,8 +116,8 @@
    {% elif zoom >= 7 %}
       {{ _water_z0_7('ne_10m_ocean', 'ne_10m_lakes') }}
    {% elif zoom >= 4 %}
-      {{ _water_z0_7('ne_50m_ocean', 'ne_50m_lakes') }}
+      {{ _water_z0_7('ne_10m_ocean', 'ne_10m_lakes') }}
    {% elif zoom >= 0 %}
-      {{ _water_z0_7('ne_110m_ocean', 'ne_110m_lakes') }}
+      {{ _water_z0_7('ne_50m_ocean', 'ne_50m_lakes') }}
    {% endif %}
 {%- endmacro %}

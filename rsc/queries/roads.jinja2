@@ -1,31 +1,25 @@
 {% set roads_select %}
    SELECT
          osm_id AS __id__,
+         'osm' as source,
          way AS __geometry__,
-         'openstreetmap' AS source,
+         type,
          name,
-         highway,
-         railway,
+         tunnel,
+         bridge,
+         oneway,
          ref,
-         route,
-         tags->'type' AS type,
-         tags->'colour' AS colour,
-         tags->'network' AS network,
-         tags->'state' AS state,
-         tags->'symbol' AS symbol,
-         tags->'description' AS description,
-         tags->'distance' AS distance,
-         tags->'ascent' AS ascent,
-         tags->'descent' AS descent,
-         tags->'roundtrip' AS roundtrip,
-         tags->'route_name' AS route_name,
-         %#tags AS tags
+         z_order,
+         access,
+         service
 {% endset %}
 
 {% macro roads(zoom) -%}
    {% if zoom >= 15 %}
-        {{ roads_select }} FROM roads_z15plus
+        {{ roads_select }} FROM import.osm_roads_z15
    {% elif zoom >= 10 %}
-        {{ roads_select }} FROM {{ "roads_z" ~ zoom }}
+        {{ roads_select }} FROM {{ "import.osm_roads_z" ~ zoom }}
+   {% elif zoom >= 8 %}
+        {{ roads_select }} FROM import.osm_roads_z10
    {% endif %}
 {%- endmacro %}
