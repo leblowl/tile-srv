@@ -18,7 +18,7 @@ def up (host='127.0.0.1', port=8088):
 app = Bottle()
 app.route('/<layer>/<z:int>/<x:int>/<y:int>.<ext>', 'GET', get_tile)
 app.error(404)(lambda err : 'Not found.')
-tile_gen.set_config(config)
+tile_gen.init_env(config)
 
 if __name__ == '__main__':
   up()
